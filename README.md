@@ -2,7 +2,7 @@
 ROS python driver for parrot mambo drone 
 
 This is the code that is explained in the report:
-
+# Start of code. Importation 
 #!/usr/bin/env python3.5
 import rospy
 from std_msgs.msg import String, Empty
@@ -15,20 +15,24 @@ mamboAddr = "E0:14:A3:A5:3D:FD" #change this to yours
 
 # remember to set True/False for the wifi depending on if we are using the wifi or the BLE to connect
 mambo = Mambo(mamboAddr, use_wifi=False)
-
-in_the_air = False # this is set to false because when we start the drone, it is waiting for a command on the ground
+in_the_air = False 
 hold_connection = True
 wait = 0
 
-def takeoff(self): #Function to take off
+# First function. Take off.
+
+def takeoff(self):
+
     global in_the_air #we have to declare it once more because the function won't recognize it if it's out of it.
     if in_the_air == False:
         print("Taking off!")
-#        mambo.safe_takeoff(3)
+        mambo.safe_takeoff(3)
         in_the_air = True #the state changes to true because it has taken off
     pass
 
+# Second Function. Land.
 def land(self):
+
     global in_the_air
     global rospy
     if in_the_air == True:
@@ -41,7 +45,9 @@ def land(self):
         print("Landed")#to know it's being run up to here
     pass
 
+# Third Function. Movement
 def movement(data):
+
     global in_the_air
     global wait
     global mambo, hold_connection
@@ -50,12 +56,14 @@ def movement(data):
         hold_connection = False
         wait=wait+1 #counter. This counts in seconds starting at 0
         if wait == 10: # when the counter gets to 0 then this condition is met and executed
-#            mambo.fly_direct(roll=(int(data.linear.y * 100)*(-1)), pitch=int(data.linear.x * 100), yaw=(int(data.angular.z * 100)*(-1)), vertical_movement=int(data.linear.z * 100), duration=0.01)
+            mambo.fly_direct(roll=(int(data.linear.y * 100)*(-1)), pitch=int(data.linear.x * 100), yaw=(int(data.angular.z * 100)*(-1)), vertical_movement=int(data.linear.z * 100), duration=0.01)
             #the values from above, e.g data.linear.y, are taken from the "manual control code". It's multiplied by 100 to get values from 0 to 100 and it is turned to integer values
             wait = 0 #it's set to 0 again so the process can repeat
-pass
+    pass
 
+# Fourth function. Safety shutdown.
 def shutdown_hook():
+
     global in_the_air
 
     if in_the_air == True:
@@ -64,9 +72,11 @@ def shutdown_hook():
         mambo.safe_land(3)
         mambo.smart_sleep(2)
     print ('rospy is going down')
-pass
+    pass
+ # Fifth function. Subscribing. 
 
-def mambo_functions(): #the subscribing node
+def mambo_functions():
+
     global landed
     global rospy
 
@@ -79,12 +89,10 @@ def mambo_functions(): #the subscribing node
 
 
 if __name__ == '__main__':
-    print(sys.version) #To know what python version is being used
 
     if True:
         print("trying to connect")
-        success = mambo.connect(num_retries=20)    #connect(num_retries) connect to the Minidrone using BLE
-                                                #You can specify a maximum number of re-tries. Returns true if the connection suceeded or False otherwise.
+        success = mambo.connect(num_retries=20)     
         print("connected: %s" % success)
         if (success):
             print("wait! 4s")
